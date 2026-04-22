@@ -1,0 +1,21 @@
+{
+  "name": "thiltapes-api-node",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Thiltapes backend em Node.js + Express",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "multer": "^2.0.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
