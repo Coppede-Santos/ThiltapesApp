@@ -6,6 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Painel do Administrador"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <Button
+        android:id="@+id/btnGerenciarJogadores"
+        android:text="Gerenciar Jogadores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"/>
+
     <Button
         android:id="@+id/btnCadastrar"
         android:text="Cadastrar Thiltape"
@@ -21,7 +36,7 @@
 
     <Button
         android:id="@+id/btnRanking"
-        android:text="Ranking"
+        android:text="Ver Ranking"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"/>

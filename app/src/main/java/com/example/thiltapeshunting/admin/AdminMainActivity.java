@@ -14,6 +14,9 @@ public class AdminMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
 
+        findViewById(R.id.btnGerenciarJogadores).setOnClickListener(v ->
+                startActivity(new Intent(this, GerenciarJogadoresActivity.class)));
+
         findViewById(R.id.btnCadastrar).setOnClickListener(v ->
                 startActivity(new Intent(this, TelaCadastro.class)));
 

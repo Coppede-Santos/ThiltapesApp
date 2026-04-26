@@ -50,7 +50,7 @@ public class ApiClient {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    public void criarPlayer(String nome, PlayerCallback callback) {
+    public void crearPlayer(String nome, PlayerCallback callback) {
         executor.execute(() -> {
             Player player = null;
             try {
@@ -76,6 +76,50 @@ public class ApiClient {
 
             Player finalPlayer = player;
             mainHandler.post(() -> callback.onResult(finalPlayer));
+        });
+    }
+
+    public void atualizarPlayer(int id, String nome, BooleanCallback callback) {
+        executor.execute(() -> {
+            boolean ok = false;
+            try {
+                URL url = new URL(ApiConfig.BASE_URL + "/admin/players/" + id);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("PUT");
+                con.setConnectTimeout(8000);
+                con.setReadTimeout(8000);
+                con.setRequestProperty("Content-Type", "application/json");
+                con.setDoOutput(true);
+
+                JSONObject payload = new JSONObject();
+                payload.put("nome", nome);
+                writeBody(con, payload.toString());
+
+                ok = (con.getResponseCode() >= 200 && con.getResponseCode() < 300);
+                con.disconnect();
+            } catch (Exception ignored) {
+            }
+            boolean finalOk = ok;
+            mainHandler.post(() -> callback.onResult(finalOk));
+        });
+    }
+
+    public void deletarPlayer(int id, BooleanCallback callback) {
+        executor.execute(() -> {
+            boolean ok = false;
+            try {
+                URL url = new URL(ApiConfig.BASE_URL + "/admin/players/" + id);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("DELETE");
+                con.setConnectTimeout(8000);
+                con.setReadTimeout(8000);
+
+                ok = (con.getResponseCode() >= 200 && con.getResponseCode() < 300);
+                con.disconnect();
+            } catch (Exception ignored) {
+            }
+            boolean finalOk = ok;
+            mainHandler.post(() -> callback.onResult(finalOk));
         });
     }
 

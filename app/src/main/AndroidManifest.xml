@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -21,12 +20,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ThiltapesHunting"
         android:usesCleartextTraffic="true">
+
         <activity
-            android:name=".admin.adapter.RankingAdapter"
-            android:exported="false" />
-        <activity
-            android:name=".admin.adapter.AdminThiltapeAdapter"
-            android:exported="false" />
+            android:name=".admin.GerenciarJogadoresActivity"
+            android:exported="false"
+            android:label="Gerenciar Jogadores" />
         <activity
             android:name=".admin.TelaCadastro"
             android:exported="false" />
