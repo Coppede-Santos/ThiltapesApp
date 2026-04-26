@@ -2,4 +2,33 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Paleta principal -->
+    <color name="primaria">#1B2A4A</color>
+    <color name="primaria_dark">#111D33</color>
+    <color name="acento">#F5A623</color>
+    <color name="acento_dark">#C07D10</color>
+    <color name="fundo">#F4F6FB</color>
+    <color name="superficie">#FFFFFF</color>
+    <color name="texto_primario">#1B2A4A</color>
+    <color name="texto_secundario">#6B7A99</color>
+
+    <!-- Raridades -->
+    <color name="comum">#4CAF50</color>
+    <color name="comum_bg">#E8F5E9</color>
+    <color name="raro">#2196F3</color>
+    <color name="raro_bg">#E3F2FD</color>
+    <color name="lendario">#FF9800</color>
+    <color name="lendario_bg">#FFF3E0</color>
+
+    <!-- Medalhas ranking -->
+    <color name="ouro">#FFD700</color>
+    <color name="ouro_bg">#FFF8E1</color>
+    <color name="prata">#9E9E9E</color>
+    <color name="prata_bg">#F5F5F5</color>
+    <color name="bronze">#CD7F32</color>
+    <color name="bronze_bg">#FFF0D6</color>
+
+    <color name="perigo">#E53935</color>
+    <color name="perigo_bg">#FFEBEE</color>
 </resources>
