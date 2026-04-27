@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Base.Theme.ThiltapesHunting" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaria</item>
+        <item name="colorPrimaryVariant">@color/primaria_dark</item>
+        <item name="colorSecondary">@color/acento</item>
+        <item name="colorSurface">@color/superficie</item>
+        <item name="android:colorBackground">@color/fundo</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="Theme.ThiltapesHunting" parent="Base.Theme.ThiltapesHunting" />
+
+    <style name="HeaderCard" parent="">
+        <item name="android:background">@color/primaria</item>
+        <item name="android:paddingTop">40dp</item>
+        <item name="android:paddingBottom">28dp</item>
+        <item name="android:paddingHorizontal">20dp</item>
+    </style>
+</resources>

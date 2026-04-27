@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/fundo">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_header_gradient"
+        android:gravity="center"
+        android:paddingTop="60dp"
+        android:paddingBottom="40dp"
+        android:paddingHorizontal="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎯"
+            android:textSize="52sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Caçando Thiltapes"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Capture todos os Thiltapes!"
+            android:textColor="#99FFFFFF"
+            android:textSize="14sp"
+            android:layout_marginTop="6dp"/>
+    </LinearLayout>
+
+    <!-- Conteudo -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingHorizontal="28dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Como deseja entrar?"
+            android:textColor="@color/texto_secundario"
+            android:textSize="14sp"
+            android:layout_marginBottom="20dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Seu nome de jogador"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEntrar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="🎮  Entrar no Jogo"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            android:backgroundTint="@color/acento"
+            android:textColor="@color/white"
+            android:layout_marginBottom="12dp"
+            xmlns:app="http://schemas.android.com/apk/res-auto"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="⚙️  Área do Admin"
+            android:textSize="15sp"
+            android:textColor="@color/primaria"
+            app:cornerRadius="12dp"
+            app:strokeColor="@color/primaria"
+            app:strokeWidth="1.5dp"
+            android:backgroundTint="@color/white"
+            xmlns:app="http://schemas.android.com/apk/res-auto"/>
+    </LinearLayout>
+</LinearLayout>

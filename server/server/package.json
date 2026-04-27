@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "thiltapes-api-node": "file:.."
+  }
+}

@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Caçando Thiltapes</string>
+    <string name="hint_nome_jogador">Digite seu nome</string>
+    <string name="btn_entrar_jogo">Entrar no jogo</string>
+    <string name="btn_continuar_jogo">Continuar jogo</string>
+    <string name="btn_ver_pokedex">Ver Pokedex</string>
+    <string name="btn_capturar">Capturar</string>
+    <string name="titulo_mapa">Mapa de Thiltapes</string>
+    <string name="titulo_pokedex">Pokedex</string>
+    <string name="erro_nome_obrigatorio">Informe um nome para começar.</string>
+    <string name="erro_criar_player">Falha ao criar jogador no servidor.</string>
+    <string name="erro_localizacao">Sem permissão de localização.</string>
+    <string name="erro_mapa">Falha ao iniciar recursos do mapa.</string>
+    <string name="captura_sucesso">Thiltape capturado!</string>
+    <string name="captura_falhou">Nao foi possivel capturar este Thiltape.</string>
+    <string name="captura_fora_do_raio">Aproxime-se para capturar (ate 100m).</string>
+    <string name="captura_toque_no_marcador">Toque em um Thiltape para capturar.</string>
+    <string name="jogo_concluido">Parabéns! Você capturou todos os Thiltapes.</string>
+    <string name="raridade_label">Raridade: %1$s</string>
+</resources>
