@@ -1,18 +1,22 @@
 package com.example.thiltapeshunting.admin;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -32,7 +36,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import okhttp3.*;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class TelaCadastro extends AppCompatActivity {
 
@@ -44,10 +55,23 @@ public class TelaCadastro extends AppCompatActivity {
     private String currentPhotoPath;
     private FusedLocationProviderClient fusedLocationClient;
 
-    private static final int PICK_IMAGE = 1;
-    private static final int TAKE_PHOTO = 2;
     private static final int PERMISSION_LOCATION = 100;
     private static final int PERMISSION_CAMERA = 101;
+
+    private final ActivityResultLauncher<Intent> cameraLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    imgThiltape.setImageURI(imageUri);
+                }
+            });
+
+    private final ActivityResultLauncher<Intent> galleryLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    imageUri = result.getData().getData();
+                    imgThiltape.setImageURI(imageUri);
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,23 +102,21 @@ public class TelaCadastro extends AppCompatActivity {
                 double currentLat = location.getLatitude();
                 double currentLng = location.getLongitude();
 
-                // Sorteia dentro de ~1km
                 double randomLat = currentLat + (Math.random() - 0.5) * 2 * 0.009;
                 double randomLng = currentLng + (Math.random() - 0.5) * 2 * (0.009 / Math.cos(Math.toRadians(currentLat)));
 
                 txtLat.setText(String.format(Locale.US, "%.6f", randomLat));
                 txtLng.setText(String.format(Locale.US, "%.6f", randomLng));
-                toast("Localização sorteada!");
             } else {
-                toast("Não foi possível obter sua localização.");
+                toast("Não foi possível obter a localização atual");
             }
         });
     }
 
     private void selecionarImagem() {
         String[] options = {"Câmera", "Galeria"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Selecionar Imagem");
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Escolher imagem");
         builder.setItems(options, (dialog, which) -> {
             if (which == 0) {
                 verificarPermissaoCamera();
@@ -115,8 +137,7 @@ public class TelaCadastro extends AppCompatActivity {
 
     private void abrirCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Tenta criar o arquivo primeiro
-        File photoFile = null;
+        File photoFile;
         try {
             photoFile = createImageFile();
         } catch (IOException ex) {
@@ -125,19 +146,16 @@ public class TelaCadastro extends AppCompatActivity {
         }
 
         if (photoFile != null) {
-            // Usa o ID do pacote fixo para evitar erros com ${applicationId}
-            String authority = "com.example.thiltapeshunting.fileprovider";
+            String authority = getPackageName() + ".fileprovider";
             imageUri = FileProvider.getUriForFile(this, authority, photoFile);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             
-            // Adiciona permissão de escrita explicitamente para a Intent
             takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
             try {
-                startActivityForResult(takePictureIntent, TAKE_PHOTO);
+                cameraLauncher.launch(takePictureIntent);
             } catch (Exception e) {
-                e.printStackTrace();
                 toast("Erro ao abrir câmera: " + e.getMessage());
             }
         }
@@ -154,7 +172,7 @@ public class TelaCadastro extends AppCompatActivity {
 
     private void abrirGaleria() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, PICK_IMAGE);
+        galleryLauncher.launch(intent);
     }
 
     @Override
@@ -165,20 +183,6 @@ public class TelaCadastro extends AppCompatActivity {
                 abrirCamera();
             } else {
                 toast("Permissão de câmera negada");
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int req, int res, Intent data) {
-        super.onActivityResult(req, res, data);
-
-        if (res == RESULT_OK) {
-            if (req == PICK_IMAGE && data != null) {
-                imageUri = data.getData();
-                imgThiltape.setImageURI(imageUri);
-            } else if (req == TAKE_PHOTO) {
-                imgThiltape.setImageURI(imageUri);
             }
         }
     }
@@ -233,26 +237,27 @@ public class TelaCadastro extends AppCompatActivity {
 
             ApiClient.getOkHttpClient().newCall(request).enqueue(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     runOnUiThread(() -> toast("Erro conexão: " + e.getMessage()));
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (response.isSuccessful()) {
                         runOnUiThread(() -> {
                             toast("Cadastrado com sucesso!");
                             finish();
                         });
                     } else {
-                        String errorBody = response.body() != null ? response.body().string() : "Sem detalhes";
-                        runOnUiThread(() -> toast("Erro do servidor (" + response.code() + "): " + errorBody));
+                        try (ResponseBody responseBody = response.body()) {
+                            String errorBody = responseBody != null ? responseBody.string() : "Sem detalhes";
+                            runOnUiThread(() -> toast("Erro do servidor (" + response.code() + "): " + errorBody));
+                        }
                     }
                 }
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
             toast("Erro ao processar imagem: " + e.getMessage());
         }
     }

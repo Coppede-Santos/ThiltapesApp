@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:15-3.3-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: thiltapes
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: postgresql://db:5432/thiltapes
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_AUTO_INIT: "true"
+      ADMIN_USER: admin
+      ADMIN_PASS: admin123
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

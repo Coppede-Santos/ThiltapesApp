@@ -92,7 +92,14 @@ public class ApiClient {
 
                 int code = con.getResponseCode();
                 Log.d(TAG, "loginAdmin status: " + code);
-                // Se redirecionar ou der 200, consideramos sucesso (o servlet redireciona no sucesso)
+                
+                // Salva os cookies recebidos do servidor
+                String setCookie = con.getHeaderField("Set-Cookie");
+                if (setCookie != null) {
+                    android.webkit.CookieManager.getInstance().setCookie(ApiConfig.BASE_URL, setCookie);
+                }
+
+                // Se redirecionar ou der 200, consideramos sucesso
                 ok = (code >= 200 && code < 400);
                 con.disconnect();
             } catch (Exception e) {
@@ -339,9 +346,15 @@ public class ApiClient {
                 con.setRequestMethod("GET");
                 con.setConnectTimeout(8000);
                 con.setReadTimeout(8000);
+                
+                // Força o envio dos cookies para manter a sessão do admin
+                String cookies = android.webkit.CookieManager.getInstance().getCookie(ApiConfig.BASE_URL);
+                if (cookies != null) {
+                    con.setRequestProperty("Cookie", cookies);
+                }
 
                 int responseCode = con.getResponseCode();
-                Log.d(TAG, "listarPokedex: status=" + responseCode);
+                Log.d(TAG, "buscarTodosAdmin: status=" + responseCode);
                 if (responseCode >= 200 && responseCode < 300) {
                     String body = readResponse(con);
                     Log.d(TAG, "listarPokedex: response=" + body);
@@ -396,6 +409,11 @@ public class ApiClient {
                 con.setRequestMethod("GET");
                 con.setConnectTimeout(8000);
                 con.setReadTimeout(8000);
+
+                String cookies = android.webkit.CookieManager.getInstance().getCookie(ApiConfig.BASE_URL);
+                if (cookies != null) {
+                    con.setRequestProperty("Cookie", cookies);
+                }
 
                 int responseCode = con.getResponseCode();
                 Log.d(TAG, "buscarRanking: status=" + responseCode);
