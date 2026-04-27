@@ -68,7 +68,7 @@ public class AdminThiltapeAdapter extends RecyclerView.Adapter<AdminThiltapeAdap
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nome, raridade;
-        Button btnDelete;
+        ImageButton btnDelete;
 
         ViewHolder(View v) {
             super(v);

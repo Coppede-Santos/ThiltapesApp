@@ -32,24 +32,16 @@ public class MainActivity extends AppCompatActivity {
         btnEntrar = findViewById(R.id.btnEntrar);
         btnAdmin = findViewById(R.id.btnAdmin);
 
-        // 👉 BOTÃO ADMIN (NOVO)
+        // Se já tem sessão ativa, pula direto para o mapa
+        if (sessionManager.hasActiveSession()) {
+            abrirMapa(sessionManager.getPlayerId(), sessionManager.getPlayerName());
+            return;
+        }
+
         btnAdmin.setOnClickListener(v -> {
             startActivity(new Intent(this, com.example.thiltapeshunting.admin.LoginAdminActivity.class));
         });
 
-        // 👉 SE JÁ TEM SESSÃO
-        if (sessionManager.hasActiveSession()) {
-            String playerName = sessionManager.getPlayerName();
-            etNome.setText(playerName);
-
-            btnEntrar.setText(getString(R.string.btn_continuar_jogo));
-            btnEntrar.setOnClickListener(v ->
-                    abrirMapa(sessionManager.getPlayerId(), playerName)
-            );
-            return;
-        }
-
-        // 👉 CRIAR PLAYER
         btnEntrar.setOnClickListener(v -> criarPlayerEEntrar());
     }
 

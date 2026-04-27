@@ -102,6 +102,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             startActivity(intent);
         });
 
+        findViewById(R.id.btnVoltarMenu).setOnClickListener(v -> {
+            new SessionManager(this).clear();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        });
+
         SupportMapFragment mapFragment = SupportMapFragment.newInstance();
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.mapContainer, mapFragment).commit();

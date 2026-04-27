@@ -28,14 +28,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.JavaNetCookieJar;
+import okhttp3.OkHttpClient;
 
 public class ApiClient {
 
     private static final String TAG = "ApiClient";
     private static final CookieManager cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+    private static final OkHttpClient okHttpClient;
 
     static {
         CookieHandler.setDefault(cookieManager);
+        okHttpClient = new OkHttpClient.Builder()
+                .cookieJar(new JavaNetCookieJar(cookieManager))
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build();
+    }
+
+    public static OkHttpClient getOkHttpClient() {
+        return okHttpClient;
     }
 
     public interface PlayerCallback {
@@ -93,7 +107,7 @@ public class ApiClient {
         executor.execute(() -> {
             Player player = null;
             try {
-                URL url = new URL(ApiConfig.BASE_URL + "/admin/players");
+                URL url = new URL(ApiConfig.BASE_URL + "/player");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("POST");
                 con.setConnectTimeout(8000);

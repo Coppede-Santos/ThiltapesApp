@@ -19,16 +19,12 @@ val mapsApiKey = System.getenv("GOOGLE_MAPS_API_KEY")
 
 android {
     namespace = "com.example.thiltapeshunting"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.thiltapeshunting"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
@@ -60,6 +56,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.recyclerview)
     implementation(libs.okhttp)
+    implementation(libs.okhttp.urlconnection)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
