@@ -4,6 +4,6 @@ public final class ApiConfig {
     private ApiConfig() {
     }
 
-    // Emulador Android acessa localhost da maquina host via 10.0.2.2
-    public static final String BASE_URL = "http://10.0.2.2:8080/thiltapes-api";
+    // Servidor rodando na VM
+    public static final String BASE_URL = "http://177.44.248.24:8080/thiltapes-api";
 }

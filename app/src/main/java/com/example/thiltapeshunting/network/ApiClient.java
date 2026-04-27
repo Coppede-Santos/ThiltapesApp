@@ -2,6 +2,7 @@ package com.example.thiltapeshunting.network;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.example.thiltapeshunting.model.GameStatus;
 import com.example.thiltapeshunting.model.Player;
@@ -17,6 +18,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +30,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ApiClient {
+
+    private static final String TAG = "ApiClient";
+    private static final CookieManager cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+
+    static {
+        CookieHandler.setDefault(cookieManager);
+    }
 
     public interface PlayerCallback {
         void onResult(Player player);
@@ -50,6 +61,34 @@ public class ApiClient {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
+    public void loginAdmin(String user, String pass, BooleanCallback callback) {
+        executor.execute(() -> {
+            boolean ok = false;
+            try {
+                URL url = new URL(ApiConfig.BASE_URL + "/admin/login");
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("POST");
+                con.setConnectTimeout(8000);
+                con.setReadTimeout(8000);
+                con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                con.setDoOutput(true);
+
+                String payload = "usuario=" + user + "&senha=" + pass;
+                writeBody(con, payload);
+
+                int code = con.getResponseCode();
+                Log.d(TAG, "loginAdmin status: " + code);
+                // Se redirecionar ou der 200, consideramos sucesso (o servlet redireciona no sucesso)
+                ok = (code >= 200 && code < 400);
+                con.disconnect();
+            } catch (Exception e) {
+                Log.e(TAG, "Error in loginAdmin", e);
+            }
+            boolean finalOk = ok;
+            mainHandler.post(() -> callback.onResult(finalOk));
+        });
+    }
+
     public void criarPlayer(String nome, PlayerCallback callback) {
         executor.execute(() -> {
             Player player = null;
@@ -67,12 +106,16 @@ public class ApiClient {
                 writeBody(con, payload.toString());
 
                 int responseCode = con.getResponseCode();
+                Log.d(TAG, "criarPlayer: status=" + responseCode);
                 if (responseCode >= 200 && responseCode < 300) {
-                    JSONObject json = new JSONObject(readResponse(con));
+                    String body = readResponse(con);
+                    Log.d(TAG, "criarPlayer: response=" + body);
+                    JSONObject json = new JSONObject(body);
                     player = new Player(json.getInt("id"), json.optString("nome", nome));
                 }
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in criarPlayer", e);
             }
 
             Player finalPlayer = player;
@@ -97,8 +140,10 @@ public class ApiClient {
                 writeBody(con, payload.toString());
 
                 ok = (con.getResponseCode() >= 200 && con.getResponseCode() < 300);
+                Log.d(TAG, "deletarThiltape: status=" + con.getResponseCode());
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in deletarThiltape", e);
             }
             boolean finalOk = ok;
             mainHandler.post(() -> callback.onResult(finalOk));
@@ -116,8 +161,10 @@ public class ApiClient {
                 con.setReadTimeout(8000);
 
                 ok = (con.getResponseCode() >= 200 && con.getResponseCode() < 300);
+                Log.d(TAG, "deletarThiltape: status=" + con.getResponseCode());
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in deletarThiltape", e);
             }
             boolean finalOk = ok;
             mainHandler.post(() -> callback.onResult(finalOk));
@@ -135,8 +182,12 @@ public class ApiClient {
                 con.setConnectTimeout(8000);
                 con.setReadTimeout(8000);
 
-                if (con.getResponseCode() >= 200 && con.getResponseCode() < 300) {
-                    JSONArray arr = new JSONArray(readResponse(con));
+                int responseCode = con.getResponseCode();
+                Log.d(TAG, "buscarThiltapes: status=" + responseCode);
+                if (responseCode >= 200 && responseCode < 300) {
+                    String body = readResponse(con);
+                    Log.d(TAG, "buscarThiltapes: response=" + body);
+                    JSONArray arr = new JSONArray(body);
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
                         itens.add(new Thiltape(
@@ -150,7 +201,8 @@ public class ApiClient {
                     }
                 }
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in buscarThiltapes", e);
             }
 
             mainHandler.post(() -> callback.onResult(itens));
@@ -177,13 +229,16 @@ public class ApiClient {
                 writeBody(con, payload.toString());
 
                 int status = con.getResponseCode();
+                Log.d(TAG, "capturar: status=" + status);
                 if (status >= 200 && status < 300) {
                     String body = readResponse(con);
+                    Log.d(TAG, "capturar: response=" + body);
                     JSONObject json = new JSONObject(body);
                     ok = json.optBoolean("capturado", false);
                 }
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in capturar", e);
             }
 
             boolean finalOk = ok;
@@ -201,8 +256,12 @@ public class ApiClient {
                 con.setConnectTimeout(8000);
                 con.setReadTimeout(8000);
 
-                if (con.getResponseCode() >= 200 && con.getResponseCode() < 300) {
-                    JSONArray arr = new JSONArray(readResponse(con));
+                int responseCode = con.getResponseCode();
+                Log.d(TAG, "listarPokedex: status=" + responseCode);
+                if (responseCode >= 200 && responseCode < 300) {
+                    String body = readResponse(con);
+                    Log.d(TAG, "listarPokedex: response=" + body);
+                    JSONArray arr = new JSONArray(body);
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
                         itens.add(new Thiltape(
@@ -216,7 +275,8 @@ public class ApiClient {
                     }
                 }
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in listarPokedex", e);
             }
 
             mainHandler.post(() -> callback.onResult(itens));
@@ -233,8 +293,12 @@ public class ApiClient {
                 con.setConnectTimeout(8000);
                 con.setReadTimeout(8000);
 
-                if (con.getResponseCode() >= 200 && con.getResponseCode() < 300) {
-                    JSONObject obj = new JSONObject(readResponse(con));
+                int responseCode = con.getResponseCode();
+                Log.d(TAG, "statusPartida: status=" + responseCode);
+                if (responseCode >= 200 && responseCode < 300) {
+                    String body = readResponse(con);
+                    Log.d(TAG, "statusPartida: response=" + body);
+                    JSONObject obj = new JSONObject(body);
                     status = new GameStatus(
                             obj.getInt("playerId"),
                             obj.getInt("totalThiltapes"),
@@ -243,7 +307,8 @@ public class ApiClient {
                     );
                 }
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in statusPartida", e);
             }
 
             GameStatus finalStatus = status;
@@ -261,8 +326,12 @@ public class ApiClient {
                 con.setConnectTimeout(8000);
                 con.setReadTimeout(8000);
 
-                if (con.getResponseCode() >= 200 && con.getResponseCode() < 300) {
-                    JSONArray arr = new JSONArray(readResponse(con));
+                int responseCode = con.getResponseCode();
+                Log.d(TAG, "listarPokedex: status=" + responseCode);
+                if (responseCode >= 200 && responseCode < 300) {
+                    String body = readResponse(con);
+                    Log.d(TAG, "listarPokedex: response=" + body);
+                    JSONArray arr = new JSONArray(body);
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
                         itens.add(new Thiltape(
@@ -276,7 +345,8 @@ public class ApiClient {
                     }
                 }
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in listarPokedex", e);
             }
             mainHandler.post(() -> callback.onResult(itens));
         });
@@ -293,8 +363,10 @@ public class ApiClient {
                 con.setReadTimeout(8000);
 
                 ok = (con.getResponseCode() >= 200 && con.getResponseCode() < 300);
+                Log.d(TAG, "deletarThiltape: status=" + con.getResponseCode());
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in deletarThiltape", e);
             }
             boolean finalOk = ok;
             mainHandler.post(() -> callback.onResult(finalOk));
@@ -311,8 +383,12 @@ public class ApiClient {
                 con.setConnectTimeout(8000);
                 con.setReadTimeout(8000);
 
-                if (con.getResponseCode() >= 200 && con.getResponseCode() < 300) {
-                    JSONArray arr = new JSONArray(readResponse(con));
+                int responseCode = con.getResponseCode();
+                Log.d(TAG, "buscarRanking: status=" + responseCode);
+                if (responseCode >= 200 && responseCode < 300) {
+                    String body = readResponse(con);
+                    Log.d(TAG, "buscarRanking: response=" + body);
+                    JSONArray arr = new JSONArray(body);
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
                         itens.add(new Player(
@@ -323,7 +399,8 @@ public class ApiClient {
                     }
                 }
                 con.disconnect();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "Error in buscarRanking", e);
             }
             mainHandler.post(() -> callback.onResult(itens));
         });

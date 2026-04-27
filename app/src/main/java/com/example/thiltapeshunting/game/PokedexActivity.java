@@ -28,6 +28,8 @@ public class PokedexActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
 
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+
         playerId = getIntent().getIntExtra(EXTRA_PLAYER_ID, -1);
         if (playerId <= 0) {
             playerId = new SessionManager(this).getPlayerId();

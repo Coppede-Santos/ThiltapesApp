@@ -20,6 +20,9 @@ import com.google.android.gms.location.LocationServices;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.util.Locale;
 
 import okhttp3.*;
@@ -141,7 +144,7 @@ public class TelaCadastro extends AppCompatActivity {
                     .build();
 
             Request request = new Request.Builder()
-                    .url(ApiConfig.BASE_URL + "/admin/thiltapes")
+                    .url(ApiConfig.BASE_URL + "/admin/thiltape")
                     .post(requestBody)
                     .build();
 

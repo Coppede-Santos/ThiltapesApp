@@ -17,4 +17,5 @@
     <string name="captura_toque_no_marcador">Toque em um Thiltape para capturar.</string>
     <string name="jogo_concluido">Parabéns! Você capturou todos os Thiltapes.</string>
     <string name="raridade_label">Raridade: %1$s</string>
+    <string name="voltar">Voltar</string>
 </resources>

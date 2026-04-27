@@ -28,11 +28,18 @@ public class LoginAdminActivity extends AppCompatActivity {
         String user = etUser.getText().toString();
         String pass = etPass.getText().toString();
 
-        if (user.equals("admin") && pass.equals("admin123")) {
-            startActivity(new Intent(this, AdminMainActivity.class));
-            finish();
-        } else {
-            Toast.makeText(this, "Login inválido", Toast.LENGTH_SHORT).show();
+        if (user.isEmpty() || pass.isEmpty()) {
+            Toast.makeText(this, "Preencha os campos", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        new com.example.thiltapeshunting.network.ApiClient().loginAdmin(user, pass, ok -> {
+            if (ok) {
+                startActivity(new Intent(this, AdminMainActivity.class));
+                finish();
+            } else {
+                Toast.makeText(this, "Login inválido no servidor", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
